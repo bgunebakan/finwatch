@@ -1,0 +1,23 @@
+[
+   {
+      "model": "app.stock",
+      "pk": "AAPL",
+      "fields": {
+         "name": "Apple"
+      }
+   },
+   {
+      "model": "app.stock",
+      "pk": "INTC",
+      "fields": {
+         "name": "Intel"
+      }
+   },
+   {
+      "model": "app.stock",
+      "pk": "TWTR",
+      "fields": {
+         "name": "Twitter Inc."
+      }
+   }
+]

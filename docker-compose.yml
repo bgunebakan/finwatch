@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  web:
+    restart: always
+    build: .
+    expose:
+      - "8000"
+    links:
+      - postgres:postgres
+      - redis:redis
+    volumes:
+      - web-django:/app
+      - web-static:/app/static
+
+    env_file: .env
+    environment:
+      DEBUG: 'true'
+    command: >
+        sh -c "python manage.py migrate && python manage.py loaddata user && python manage.py loaddata stock
+              /usr/local/bin/gunicorn finwatch.wsgi:application -w 2 -b :8000 --log-level debug"
+
+  worker:
+    build: .
+    command: celery -A finwatch worker --beat -l info -S django
+    env_file: .env
+    
+    depends_on:
+      - postgres
+      - redis
+      
+  nginx:
+    restart: always
+    build: ./nginx/
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - web-static:/static
+    links:
+      - web:web
+
+  postgres:
+    restart: always
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+
+  redis:
+    restart: always
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+
+volumes:
+  web-django:
+  web-static:
+  web-data:
+  pgdata:
+  redisdata:

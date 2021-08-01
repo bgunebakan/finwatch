@@ -1,0 +1,11 @@
+django
+djangorestframework
+psycopg2-binary
+requests
+beautifulsoup4
+celery
+django-celery-beat
+django_celery_results
+gunicorn
+redis
+lxml
